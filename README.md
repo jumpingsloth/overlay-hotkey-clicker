@@ -12,6 +12,6 @@ The clicker is activated by clicking the middle mouse button
 
 `F3` / `3` :	Increase speed by 100 ms
 
-`F4` / `5` :	Set speed to default pvp speed (10 ms up; 10 ms down)
+`F4` / `4` :	Set speed to default pvp speed (10 ms up; 10 ms down)
 
 `TAB` :			Activate / deactivate automode
