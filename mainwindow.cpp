@@ -7,6 +7,7 @@
 #include <thread>
 #include <QMessageBox>
 #include <string>
+#include <QInputDialog>
 
 void MainWindow::update_label(int b_p_option) {
     std::string option = "";
@@ -137,6 +138,9 @@ MainWindow::MainWindow(QWidget *parent)
     automode = false;
     functionKeys = true;
 
+
+
+
     QFont f("Arial", 14, QFont::Bold);
     ui->label->setFont(f);
     QPalette palette = ui->label->palette();
@@ -146,12 +150,29 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
+
     // minecraft target window "GLFW30"
-    target_window = FindWindowA("Notepad", 0);
+    QString input_target_window = QInputDialog::getText(this, "Target Window","Which window do you want to use?\nDefault: Minecraft (GLFW30)");
+    char* input_target_window_c = input_target_window.toLocal8Bit().data();
+
+    if (HWND custom_window = FindWindowA(input_target_window_c, NULL)) {
+        target_window = custom_window;
+    } else {
+        QMessageBox::StandardButton reply = QMessageBox::warning(this, "Using Default", "Invalid window title!\nUsing Default: Minecraft (GLFW30)", QMessageBox::Ok | QMessageBox::Close);
+        if (reply == QMessageBox::Ok) {
+            target_window = FindWindowA("GLFW30", NULL);
+        } else {
+            QApplication::quit();
+        }
+
+    }
+
     if (!target_window) {
       qDebug() << "window not found";
-      return;
+      QMessageBox::warning(this, "Window not found", "Did not find the requested window!", QMessageBox::Ok);
+      QApplication::quit();
     }
+
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_pos()));
     timer->start(50); // update interval in milliseconds
